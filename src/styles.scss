@@ -38,6 +38,7 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 }
 
 header {
@@ -66,6 +67,7 @@ header {
         padding: 0;
         display: flex;
         width: 100%;
+        gap: 10px;
 
         li {
           list-style: none;
@@ -109,6 +111,7 @@ header {
   width: 100%;
   margin: 0 auto;
   color: #fff;
+  
 
   span {
     display: block;

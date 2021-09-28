@@ -1,6 +1,5 @@
 import React, { createContext, createRef, Suspense, useContext, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { useInView } from 'react-intersection-observer';
@@ -91,6 +90,8 @@ const Lights = () => {
 
 const ModelWithText = ({ domContent, children, bgColor, positionY, modelColor }) => {
   const ref = useRef();
+
+  const [active, setActive] = useState(false);
   const [refItem, inView] = useInView({ threshold: 0 });
 
   useFrame(() => (ref.current.rotation.y += 0.01));
@@ -99,16 +100,45 @@ const ModelWithText = ({ domContent, children, bgColor, positionY, modelColor })
   return (
     <Section factor={1.5} offset={1}>
       <group position={[0, positionY, 0]}>
-        <mesh ref={ref} position={[0, -28, 0]}>
+        <mesh ref={ref} position={[0, -28, 0]} scale={active ? 1.4 : 1}>
           <Drifter color={modelColor} />
         </mesh>
         <Html fullscreen portal={domContent}>
-          <div ref={refItem} className="container">
+          <div ref={refItem} className="container" onClick={() => setActive(!active)}>
             <h1 className="title">{children}</h1>
           </div>
         </Html>
       </group>
     </Section>
+  );
+};
+
+const Header = () => {
+  return (
+    <header>
+      <div className="header-inner">
+        <div className="logo">CARS</div>
+        <nav>
+          <ul>
+            <li>
+              <a href="/">these</a>
+            </li>
+            <li>
+              <a href="/">links</a>
+            </li>
+            <li>
+              <a href="/">do</a>
+            </li>
+            <li>
+              <a href="/">nothing</a>
+            </li>
+            <li className="btn">
+              <a href="/">lol</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
   );
 };
 
@@ -123,30 +153,7 @@ function App() {
 
   return (
     <>
-      <header>
-        <div className="header-inner">
-          <div className="logo">CARS</div>
-          <nav>
-            <ul>
-              <li>
-                <a href="/">these</a>
-              </li>
-              <li>
-                <a href="/">links</a>
-              </li>
-              <li>
-                <a href="/">do</a>
-              </li>
-              <li>
-                <a href="/">nothing</a>
-              </li>
-              <li className="btn">
-                <a href="/">lol</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
+      <Header />
       <Canvas concurrent colorManagement camera={{ position: [0, 0, 120], fov: 70 }}>
         <Lights />
         <Suspense fallback={null}>
