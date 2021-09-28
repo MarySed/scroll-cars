@@ -15,10 +15,8 @@ export default function Model({ color, ...props }) {
   const { nodes, materials, animations } = useGLTF('/drifter.glb');
   const { actions } = useAnimations(animations, group);
 
-  const modelColor = new THREE.Color(color);
-
   return (
-    <group ref={group} scale={[0.1, 0.1, 0.1]} {...props} dispose={null}>
+    <group ref={group} scale={[0.15, 0.15, 0.15]} {...props} dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]}>
         <group rotation={[Math.PI / 2, 0, 0]}>
           <group position={[155.62, 20.72, -81.96]} rotation={[-0.21, Math.PI / 2, 0]} scale={2.8}>
@@ -74,7 +72,7 @@ export default function Model({ color, ...props }) {
             <mesh geometry={nodes.Smoke012_Smoke_0.geometry} material={nodes.Smoke012_Smoke_0.material} />
           </group>
           <group name="Frame" rotation={[-Math.PI / 2, 0, 0]} scale={[300, 100, 50]}>
-            <mesh geometry={nodes.Frame_Orange_0.geometry} material={materials.Orange} material-color={modelColor} />
+            <mesh geometry={nodes.Frame_Orange_0.geometry} material={materials.Orange} material-color={new THREE.Color(color)} />
             <mesh geometry={nodes.Frame_Black_0.geometry} material={nodes.Frame_Black_0.material} />
             <mesh geometry={nodes.Frame_Glass_0.geometry} material={materials.Glass} />
             <mesh geometry={nodes.Frame_Light_0.geometry} material={materials.Light} />

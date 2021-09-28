@@ -1,5 +1,6 @@
 import React, { createContext, createRef, Suspense, useContext, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import { useInView } from 'react-intersection-observer';
@@ -19,29 +20,24 @@ const offsetContext = createContext(0);
 const useSection = () => {
   const { sections, pages, zoom } = state;
   const { size, viewport } = useThree();
-
   const offset = useContext(offsetContext);
   const viewportWidth = viewport.width;
   const viewportHeight = viewport.height;
-
   const canvasWidth = viewportWidth / zoom;
   const canvasHeight = viewportHeight / zoom;
-
   const isMobile = size.width < 700;
   const margin = canvasWidth * (isMobile ? 0.2 : 0.1);
   const contentMaxWidth = canvasWidth * (isMobile ? 0.8 : 0.6);
-  const sectionHeight = canvasWidth * ((pages - 1) / (sections - 1));
-
+  const sectionHeight = canvasHeight * ((pages - 1) / (sections - 1));
   const aspect = size.height / viewportHeight;
-
   return {
     aspect,
     viewport,
     offset,
-    viewportHeight,
     viewportWidth,
-    canvasHeight,
+    viewportHeight,
     canvasWidth,
+    canvasHeight,
     isMobile,
     margin,
     contentMaxWidth,
@@ -93,22 +89,17 @@ const Lights = () => {
   );
 };
 
-const ModelWithNotation = ({ domContent, children, bgColor, position, modelColor }) => {
+const ModelWithText = ({ domContent, children, bgColor, positionY, modelColor }) => {
   const ref = useRef();
-  const { isMobile } = useSection();
-
-  useFrame(() => (ref.current.rotation.y += 0.01));
-
   const [refItem, inView] = useInView({ threshold: 0 });
 
-  useEffect(() => {
-    inView && (document.body.style.background = bgColor);
-  }, [inView]);
+  useFrame(() => (ref.current.rotation.y += 0.01));
+  useEffect(() => inView && (document.body.style.background = bgColor), [inView]);
 
   return (
-    <Section factor={1.5} offset={isMobile ? 1 : 0.5}>
-      <group position={[0, position, 0]}>
-        <mesh ref={ref} position={[0, -35, 0]}>
+    <Section factor={1.5} offset={1}>
+      <group position={[0, positionY, 0]}>
+        <mesh ref={ref} position={[0, -28, 0]}>
           <Drifter color={modelColor} />
         </mesh>
         <Html fullscreen portal={domContent}>
@@ -128,27 +119,51 @@ function App() {
 
   const handleScroll = (e) => (state.top.current = e.target.scrollTop);
 
-  useEffect(() => handleScroll({ target: scrollArea.current }), []);
+  useEffect(() => void handleScroll({ target: scrollArea.current }), []);
 
   return (
     <>
+      <header>
+        <div className="header-inner">
+          <div className="logo">CARS</div>
+          <nav>
+            <ul>
+              <li>
+                <a href="/">these</a>
+              </li>
+              <li>
+                <a href="/">links</a>
+              </li>
+              <li>
+                <a href="/">do</a>
+              </li>
+              <li>
+                <a href="/">nothing</a>
+              </li>
+              <li className="btn">
+                <a href="/">lol</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
       <Canvas concurrent colorManagement camera={{ position: [0, 0, 120], fov: 70 }}>
         <Lights />
         <Suspense fallback={null}>
-          <ModelWithNotation domContent={domContent} bgColor="#f15946" modelColor="#636567" position={250}>
-            <span>Test 1</span>
-          </ModelWithNotation>
-          <ModelWithNotation domContent={domContent} bgColor="#571ec1" modelColor="#f15946" position={0}>
-            <span>Test 2</span>
-          </ModelWithNotation>
-          <ModelWithNotation domContent={domContent} bgColor="#636567" modelColor="#571ec1" position={-250}>
-            <span>Test 3</span>
-          </ModelWithNotation>
+          <ModelWithText domContent={domContent} bgColor="#f15946" modelColor="#636567" positionY={250}>
+            <span>Hello.</span>
+          </ModelWithText>
+          <ModelWithText domContent={domContent} bgColor="#571ec1" modelColor="#f15946" positionY={0}>
+            <span>Cars are great right?</span>
+          </ModelWithText>
+          <ModelWithText domContent={domContent} bgColor="#FCD1D1" modelColor="#571ec1" positionY={-250}>
+            <span>All hail cars!</span>
+          </ModelWithText>
         </Suspense>
       </Canvas>
       <div ref={scrollArea} onScroll={handleScroll} className="scroll-area" {...events}>
         <div style={{ position: 'sticky', top: 0 }} ref={domContent} />
-        <div style={{ height: `${state.pages * 100}vh` }} />{' '}
+        <div style={{ height: `${state.pages * 100}vh` }} />
       </div>
     </>
   );
